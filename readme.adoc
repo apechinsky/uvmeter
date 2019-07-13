@@ -1,0 +1,15 @@
+= UV meter
+
+Ultraviolet intensity meter.
+
+https://learn.sparkfun.com/tutorials/ml8511-uv-sensor-hookup-guide/all[Based on sparkfun article]
+
+== Technolo
+
+== Components
+
+* ml8511 - UV sensor
+* SSD1306 - 128x32 OLED display
+* Arduino Pro Mini 3.3v
+* Micro USB 5V 1A 18650 TP4056 Lithium Battery Charger
+* LM393 Tilt sensor

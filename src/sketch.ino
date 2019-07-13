@@ -4,18 +4,22 @@
 
 #include "Screen.h"
 
-int UV_OUT_PIN = A0; 
-int UV_EN_PIN = 11; 
+// #define DEBUG
 
-int SHAKE_PIN = 2;
+// Calibration value should be obtained individually for each 
+// controller instance
+const int VOLTAGE_CALIBRATION = 1.128 * 1000 * 1023;
 
-int LED_PIN = 13;
+int UV_OUTPUT = A0; 
 
-int WAKE_UP_PIN = 2;
+int UV_ENABLE_PIN = 11; 
+
+int TILT_SENSOR_PIN = 2;
+
+int IDLE_TIME = 10 * 1000;
 
 volatile unsigned long lastTiltTime = 0;
 
-int IDLE_TIME = 30 * 1000;
 
 Screen screen;
 
@@ -23,69 +27,59 @@ VoltageReference voltage;
 
 void setup() {
     screen.begin();
-    voltage.begin(1.128 * 1000 * 1023);
 
+    #ifdef DEBUG
     Serial.begin(9600);
+    #endif
 
-    pinMode(UV_OUT_PIN, INPUT);
-    pinMode(UV_EN_PIN, INPUT);
+    voltage.begin(VOLTAGE_CALIBRATION);
 
-    pinMode(LED_PIN, OUTPUT);
-
-    pinMode(SHAKE_PIN, INPUT);
-
-    pinMode(WAKE_UP_PIN, INPUT);   
+    pinMode(UV_OUTPUT, INPUT);
+    pinMode(UV_ENABLE_PIN, INPUT);
+    pinMode(TILT_SENSOR_PIN, INPUT);   
 }
 
 
 void loop() {
 
     if (millis() - lastTiltTime > IDLE_TIME) {
-        screen.off();
-        uvEnable(true);
-
         sleepTillShake();
-
-        uvEnable(false);
-        screen.on();
     }
 
-    measure();
+    measureAndShow();
 
-    blink(1000);
-}
-
-void uvEnable(bool enable) {
-    digitalWrite(UV_EN_PIN, enable ? HIGH : LOW);
-}
-
-void blink(int duration) {
-    digitalWrite(LED_PIN, HIGH);
-    delay(duration);
-    digitalWrite(LED_PIN, LOW);
+    delay(1000);
 }
 
 void sleepTillShake() {
+    screen.off();
+    uvEnable(true);
 
-    attachInterrupt(digitalPinToInterrupt(WAKE_UP_PIN), wakeUp, CHANGE);
-
+    attachInterrupt(digitalPinToInterrupt(TILT_SENSOR_PIN), wakeUp, CHANGE);
     LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF); 
-    
-    /* detachInterrupt(digitalPinToInterrupt(WAKE_UP_PIN));  */
+
+    uvEnable(false);
+    screen.on();
+}
+
+void uvEnable(bool enable) {
+    digitalWrite(UV_ENABLE_PIN, enable ? HIGH : LOW);
 }
 
 void wakeUp() {
     lastTiltTime = millis();
 }
 
-void measure() {
-    int uvLevel = averageAnalogRead(UV_OUT_PIN);
+void measureAndShow() {
+    int uvLevel = averageAnalogRead(UV_OUTPUT);
     double uvVoltage = getUvVoltage(uvLevel);
     double uvIntensity = getUvIntensity(uvVoltage);
 
     screen.show(uvLevel, uvIntensity, voltage.readVcc() / (double)1000);
 
+    #ifdef DEBUG
     printState(uvLevel, uvVoltage, uvIntensity);
+    #endif
 }
 
 void printState(int uvLevel, double uvVoltage, double uvIntensity) {
