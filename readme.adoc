@@ -2,9 +2,13 @@
 
 Ultraviolet intensity meter.
 
-Based on https://learn.sparkfun.com/tutorials/ml8511-uv-sensor-hookup-guide/all[Sparkfun article]
+== Features
 
-== Technolo
+* UV intensity (w/cm2). Integral part represents https://en.wikipedia.org/wiki/Ultraviolet_index[UV index].
+* Raw UV sensor value
+* Battery voltage indication
+* Rechargable battery
+* Auto-on/off by tilt sensor
 
 == Components
 
@@ -13,3 +17,7 @@ Based on https://learn.sparkfun.com/tutorials/ml8511-uv-sensor-hookup-guide/all[
 * Arduino Pro Mini 3.3v
 * Micro USB 5V 1A 18650 TP4056 Lithium Battery Charger
 * LM393 Tilt sensor
+
+== Details
+Based on https://learn.sparkfun.com/tutorials/ml8511-uv-sensor-hookup-guide/all[Sparkfun article]
+
