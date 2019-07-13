@@ -2,7 +2,7 @@
 
 Ultraviolet intensity meter.
 
-https://learn.sparkfun.com/tutorials/ml8511-uv-sensor-hookup-guide/all[Based on sparkfun article]
+Based on https://learn.sparkfun.com/tutorials/ml8511-uv-sensor-hookup-guide/all[Sparkfun article]
 
 == Technolo
 
